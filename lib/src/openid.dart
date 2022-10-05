@@ -408,6 +408,7 @@ class Flow {
             'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
             'assertion': code,
           },
+          headers: {'content-type': 'application/json'},
           client: client!.httpClient);
     } else if (type == FlowType.proofKeyForCodeExchange) {
       json = await http.post(client!.issuer!.metadata.tokenEndpoint,
@@ -420,6 +421,7 @@ class Flow {
               'client_secret': client!.clientSecret,
             'code_verifier': _proofKeyForCodeExchange['code_verifier']
           },
+          headers: {'content-type': 'application/json'},
           client: client!.httpClient);
     } else if (methods!.contains('client_secret_post')) {
       json = await http.post(client!.issuer!.metadata.tokenEndpoint,
@@ -430,12 +432,16 @@ class Flow {
             'client_id': client!.clientId,
             'client_secret': client!.clientSecret
           },
+          headers: {'content-type': 'application/json'},
           client: client!.httpClient);
     } else if (methods.contains('client_secret_basic')) {
       var h = base64
           .encode('${client!.clientId}:${client!.clientSecret}'.codeUnits);
       json = await http.post(client!.issuer!.metadata.tokenEndpoint,
-          headers: {'authorization': 'Basic $h'},
+          headers: {
+            'authorization': 'Basic $h',
+            'content-type': 'application/json'
+          },
           body: {
             'grant_type': 'authorization_code',
             'code': code,
